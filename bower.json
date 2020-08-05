@@ -1,9 +1,9 @@
 {
   "name": "lunr-languages",
   "version": "1.0.0",
-  "homepage": "https://github.com/MihaiValentin/lunr-languages",
+  "homepage": "https://github.com/Tombarr/lunr-languages",
   "authors": [
-    "MihaiValentin <MihaiValentin@users.noreply.github.com>"
+    "Tombarr <Tombarr@users.noreply.github.com>"
   ],
   "description": "A a collection of languages stemmers and stopwords for Lunr Javascript library",
   "moduleType": [
@@ -20,7 +20,13 @@
     "german",
     "deutsch",
     "dutch",
+    "hindi",
+    "greek",
+    "czech",
+    "indonesian",
+    "chinese",
     "spanish",
+    "korean",
     "espanol",
     "finish",
     "francais",

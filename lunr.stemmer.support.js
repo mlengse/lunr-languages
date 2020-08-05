@@ -149,8 +149,10 @@
                         return true;
                     },
                     find_among : function(v, v_size) {
+                        var max = 128, e = 0;
                         var i = 0, j = v_size, c = this.cursor, l = this.limit, common_i = 0, common_j = 0, first_key_inspected = false;
                         while (true) {
+                            if (e++ > max) break; // Avoid infinite loop
                             var k = i + ((j - i) >> 1), diff = 0, common = common_i < common_j
                                 ? common_i
                                 : common_j, w = v[k];
@@ -178,6 +180,7 @@
                             }
                         }
                         while (true) {
+                            if (e++ > max) return 0; // Avoid infinite loop
                             var w = v[i];
                             if (common_i >= w.s_size) {
                                 this.cursor = c + w.s_size;
@@ -194,8 +197,10 @@
                         }
                     },
                     find_among_b : function(v, v_size) {
+                        var max = 128, e = 0;
                         var i = 0, j = v_size, c = this.cursor, lb = this.limit_backward, common_i = 0, common_j = 0, first_key_inspected = false;
                         while (true) {
+                            if (e++ > max) break; // Avoid infinite loop
                             var k = i + ((j - i) >> 1), diff = 0, common = common_i < common_j
                                 ? common_i
                                 : common_j, w = v[k];
@@ -223,6 +228,7 @@
                             }
                         }
                         while (true) {
+                            if (e++ > max) return 0; // Avoid infinite loop
                             var w = v[i];
                             if (common_i >= w.s_size) {
                                 this.cursor = c - w.s_size;
@@ -251,7 +257,7 @@
                     },
                     slice_check : function() {
                         if (this.bra < 0 || this.bra > this.ket || this.ket > this.limit
-                            || this.limit > current.length)
+                            || this.limit > (current || '').length)
                             throw ("faulty slice operation");
                     },
                     slice_from : function(s) {
@@ -285,18 +291,9 @@
                 var endRegex = new RegExp("[^" + wordCharacters + "]+$")
 
                 return function(token) {
-                    // for lunr version 2
-                    if (typeof token.update === "function") {
-                        return token.update(function (s) {
-                            return s
-                                .replace(startRegex, '')
-                                .replace(endRegex, '');
-                        })
-                    } else { // for lunr version 1
-                        return token
-                            .replace(startRegex, '')
-                            .replace(endRegex, '');
-                    }
+                    return token
+                        .replace(startRegex, '')
+                        .replace(endRegex, '');
                 };
             }
         }
