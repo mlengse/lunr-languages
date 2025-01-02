@@ -39,6 +39,11 @@ var list = [
     }, {
         locale: 'hi'
     }, {
+        locale: 'id',
+        file: 'IndonesianStemmer.js',
+        stopwords: stopwordsRepoFolder + 'id.csv',
+        wordCharacters: wordCharacters('Latin')
+    }, {
         locale: 'da',
         file: 'DanishStemmer.js',
         stopwords: stopwordsRepoFolder + 'da.csv',
