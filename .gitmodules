@@ -1,6 +1,9 @@
 [submodule "build/snowball-js"]
 	path = build/snowball-js
 	url = https://github.com/mlengse/snowball-js.git
+	branch = master
 [submodule "build/stopwords-filter"]
 	path = build/stopwords-filter
 	url = https://github.com/brenes/stopwords-filter.git
+	branch = master
+
