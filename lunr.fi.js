@@ -60,6 +60,14 @@
         lunr.fi.stopWordFilter,
         lunr.fi.stemmer
       );
+
+      // for lunr version 2
+      // this is necessary so that every searched word is also stemmed before
+      // in lunr <= 1 this is not needed, as it is done using the normal pipeline
+      if (this.searchPipeline) {
+        this.searchPipeline.reset();
+        this.searchPipeline.add(lunr.fi.stemmer)
+      }
     };
 
     /* lunr trimmer function */
@@ -327,7 +335,8 @@
                     sbp.bra = sbp.cursor;
                     break;
                   case 8:
-                    if (!sbp.in_grouping_b(g_V1, 97, 246) || !sbp.out_grouping_b(g_V1, 97, 246))
+                    if (!sbp.in_grouping_b(g_V1, 97, 246) ||
+                      !sbp.out_grouping_b(g_V1, 97, 246))
                       return;
                     break;
                 }
@@ -507,29 +516,25 @@
         };
 
       /* and return a function that stems a word for the current locale */
-      return function(word) {
-        st.setCurrent(word);
-        st.stem();
-        return st.getCurrent();
+      return function(token) {
+        // for lunr version 2
+        if (typeof token.update === "function") {
+          return token.update(function(word) {
+            st.setCurrent(word);
+            st.stem();
+            return st.getCurrent();
+          })
+        } else { // for lunr version <= 1
+          st.setCurrent(token);
+          st.stem();
+          return st.getCurrent();
+        }
       }
     })();
 
     lunr.Pipeline.registerFunction(lunr.fi.stemmer, 'stemmer-fi');
 
-    /* stop word filter function */
-    lunr.fi.stopWordFilter = function(token) {
-      if (lunr.fi.stopWordFilter.stopWords.indexOf(token) === -1) {
-        return token;
-      }
-    };
-
-    lunr.fi.stopWordFilter.stopWords = new lunr.SortedSet();
-    lunr.fi.stopWordFilter.stopWords.length = 236;
-
-    // The space at the beginning is crucial: It marks the empty string
-    // as a stop word. lunr.js crashes during search when documents
-    // processed by the pipeline still contain the empty string.
-    lunr.fi.stopWordFilter.stopWords.elements = ' ei eivät emme en et ette että he heidän heidät heihin heille heillä heiltä heissä heistä heitä hän häneen hänelle hänellä häneltä hänen hänessä hänestä hänet häntä itse ja johon joiden joihin joiksi joilla joille joilta joina joissa joista joita joka joksi jolla jolle jolta jona jonka jos jossa josta jota jotka kanssa keiden keihin keiksi keille keillä keiltä keinä keissä keistä keitä keneen keneksi kenelle kenellä keneltä kenen kenenä kenessä kenestä kenet ketkä ketkä ketä koska kuin kuka kun me meidän meidät meihin meille meillä meiltä meissä meistä meitä mihin miksi mikä mille millä miltä minkä minkä minua minulla minulle minulta minun minussa minusta minut minuun minä minä missä mistä mitkä mitä mukaan mutta ne niiden niihin niiksi niille niillä niiltä niin niin niinä niissä niistä niitä noiden noihin noiksi noilla noille noilta noin noina noissa noista noita nuo nyt näiden näihin näiksi näille näillä näiltä näinä näissä näistä näitä nämä ole olemme olen olet olette oli olimme olin olisi olisimme olisin olisit olisitte olisivat olit olitte olivat olla olleet ollut on ovat poikki se sekä sen siihen siinä siitä siksi sille sillä sillä siltä sinua sinulla sinulle sinulta sinun sinussa sinusta sinut sinuun sinä sinä sitä tai te teidän teidät teihin teille teillä teiltä teissä teistä teitä tuo tuohon tuoksi tuolla tuolle tuolta tuon tuona tuossa tuosta tuota tähän täksi tälle tällä tältä tämä tämän tänä tässä tästä tätä vaan vai vaikka yli'.split(' ');
+    lunr.fi.stopWordFilter = lunr.generateStopWordFilter('ei eivät emme en et ette että he heidän heidät heihin heille heillä heiltä heissä heistä heitä hän häneen hänelle hänellä häneltä hänen hänessä hänestä hänet häntä itse ja johon joiden joihin joiksi joilla joille joilta joina joissa joista joita joka joksi jolla jolle jolta jona jonka jos jossa josta jota jotka kanssa keiden keihin keiksi keille keillä keiltä keinä keissä keistä keitä keneen keneksi kenelle kenellä keneltä kenen kenenä kenessä kenestä kenet ketkä ketkä ketä koska kuin kuka kun me meidän meidät meihin meille meillä meiltä meissä meistä meitä mihin miksi mikä mille millä miltä minkä minkä minua minulla minulle minulta minun minussa minusta minut minuun minä minä missä mistä mitkä mitä mukaan mutta ne niiden niihin niiksi niille niillä niiltä niin niin niinä niissä niistä niitä noiden noihin noiksi noilla noille noilta noin noina noissa noista noita nuo nyt näiden näihin näiksi näille näillä näiltä näinä näissä näistä näitä nämä ole olemme olen olet olette oli olimme olin olisi olisimme olisin olisit olisitte olisivat olit olitte olivat olla olleet ollut on ovat poikki se sekä sen siihen siinä siitä siksi sille sillä sillä siltä sinua sinulla sinulle sinulta sinun sinussa sinusta sinut sinuun sinä sinä sitä tai te teidän teidät teihin teille teillä teiltä teissä teistä teitä tuo tuohon tuoksi tuolla tuolle tuolta tuon tuona tuossa tuosta tuota tähän täksi tälle tällä tältä tämä tämän tänä tässä tästä tätä vaan vai vaikka yli'.split(' '));
 
     lunr.Pipeline.registerFunction(lunr.fi.stopWordFilter, 'stopWordFilter-fi');
   };

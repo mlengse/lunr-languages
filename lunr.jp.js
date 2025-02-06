@@ -64,34 +64,36 @@ const TinySegmenter = require('./tinyseg'); // Japanese
       // change the tokenizer for japanese one
       lunr.tokenizer = lunr.jp.tokenizer;
     };
-    var segmenter = new TinySegmenter();  // インスタンス生成
+    var segmenter = new TinySegmenter(); // インスタンス生成
 
-    lunr.jp.tokenizer = function (obj) {
-        if (!arguments.length || obj == null || obj == undefined) return []
-        if (Array.isArray(obj)) return obj.map(function (t) { return t.toLowerCase() })
+    lunr.jp.tokenizer = function(obj) {
+      if (!arguments.length || obj == null || obj == undefined) return []
+      if (Array.isArray(obj)) return obj.map(function(t) {
+        return t.toLowerCase()
+      })
 
-        var str = obj.toString().replace(/^\s+/, '')
+      var str = obj.toString().replace(/^\s+/, '')
 
-        for (var i = str.length - 1; i >= 0; i--) {
-            if (/\S/.test(str.charAt(i))) {
-                str = str.substring(0, i + 1)
-                break
-            }
+      for (var i = str.length - 1; i >= 0; i--) {
+        if (/\S/.test(str.charAt(i))) {
+          str = str.substring(0, i + 1)
+          break
         }
+      }
 
-                     
-        var segs = segmenter.segment(str);  // 単語の配列が返る
-        return segs.filter(function (token) {
-            return !!token
-          })
-          .map(function (token) {
-            return token
-          })
+
+      var segs = segmenter.segment(str); // 単語の配列が返る
+      return segs.filter(function(token) {
+          return !!token
+        })
+        .map(function(token) {
+          return token
+        })
     }
 
     /* lunr stemmer function */
     lunr.jp.stemmer = (function() {
-      
+
       /* TODO japanese stemmer  */
       return function(word) {
         return word;

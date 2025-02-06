@@ -86,6 +86,8 @@ var list = [
         stopwords: stopwordsRepoFolder + 'it.csv',
         wordCharacters: wordCharacters('Latin')
     }, {
+        locale: 'id'
+    }, {
         locale: 'ja'
     }, {
         locale: 'jp'

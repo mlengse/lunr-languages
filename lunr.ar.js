@@ -376,9 +376,9 @@
 
     /* stop word filter function */
     lunr.ar.stopWordFilter = function(token) {
-        if (lunr.ar.stopWordFilter.stopWords.indexOf(token) === -1) {
-            return token;
-        }
+      if (lunr.ar.stopWordFilter.stopWords.indexOf(token) === -1) {
+        return token;
+      }
     };
 
     lunr.ar.stopWordFilter.stopWords = new lunr.SortedSet();

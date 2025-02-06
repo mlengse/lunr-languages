@@ -82,9 +82,9 @@
 
     /* stop word filter function */
     lunr.vi.stopWordFilter = function(token) {
-        if (lunr.vi.stopWordFilter.stopWords.indexOf(token) === -1) {
-            return token;
-        }
+      if (lunr.vi.stopWordFilter.stopWords.indexOf(token) === -1) {
+        return token;
+      }
     };
 
     lunr.vi.stopWordFilter.stopWords = new lunr.SortedSet();

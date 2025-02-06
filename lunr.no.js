@@ -60,6 +60,14 @@
         lunr.no.stopWordFilter,
         lunr.no.stemmer
       );
+
+      // for lunr version 2
+      // this is necessary so that every searched word is also stemmed before
+      // in lunr <= 1 this is not needed, as it is done using the normal pipeline
+      if (this.searchPipeline) {
+        this.searchPipeline.reset();
+        this.searchPipeline.add(lunr.no.stemmer)
+      }
     };
 
     /* lunr trimmer function */
@@ -160,7 +168,8 @@
                       sbp.slice_del();
                     else {
                       sbp.cursor = sbp.limit - v_2;
-                      if (sbp.eq_s_b(1, "k") && sbp.out_grouping_b(g_v, 97, 248))
+                      if (sbp.eq_s_b(1, "k") &&
+                        sbp.out_grouping_b(g_v, 97, 248))
                         sbp.slice_del();
                     }
                     break;
@@ -224,29 +233,25 @@
         };
 
       /* and return a function that stems a word for the current locale */
-      return function(word) {
-        st.setCurrent(word);
-        st.stem();
-        return st.getCurrent();
+      return function(token) {
+        // for lunr version 2
+        if (typeof token.update === "function") {
+          return token.update(function(word) {
+            st.setCurrent(word);
+            st.stem();
+            return st.getCurrent();
+          })
+        } else { // for lunr version <= 1
+          st.setCurrent(token);
+          st.stem();
+          return st.getCurrent();
+        }
       }
     })();
 
     lunr.Pipeline.registerFunction(lunr.no.stemmer, 'stemmer-no');
 
-    /* stop word filter function */
-    lunr.no.stopWordFilter = function(token) {
-      if (lunr.no.stopWordFilter.stopWords.indexOf(token) === -1) {
-        return token;
-      }
-    };
-
-    lunr.no.stopWordFilter.stopWords = new lunr.SortedSet();
-    lunr.no.stopWordFilter.stopWords.length = 177;
-
-    // The space at the beginning is crucial: It marks the empty string
-    // as a stop word. lunr.js crashes during search when documents
-    // processed by the pipeline still contain the empty string.
-    lunr.no.stopWordFilter.stopWords.elements = ' alle at av bare begge ble blei bli blir blitt både båe da de deg dei deim deira deires dem den denne der dere deres det dette di din disse ditt du dykk dykkar då eg ein eit eitt eller elles en enn er et ett etter for fordi fra før ha hadde han hans har hennar henne hennes her hjå ho hoe honom hoss hossen hun hva hvem hver hvilke hvilken hvis hvor hvordan hvorfor i ikke ikkje ikkje ingen ingi inkje inn inni ja jeg kan kom korleis korso kun kunne kva kvar kvarhelst kven kvi kvifor man mange me med medan meg meget mellom men mi min mine mitt mot mykje ned no noe noen noka noko nokon nokor nokre nå når og også om opp oss over på samme seg selv si si sia sidan siden sin sine sitt sjøl skal skulle slik so som som somme somt så sånn til um upp ut uten var vart varte ved vere verte vi vil ville vore vors vort vår være være vært å'.split(' ');
+    lunr.no.stopWordFilter = lunr.generateStopWordFilter('alle at av bare begge ble blei bli blir blitt både båe da de deg dei deim deira deires dem den denne der dere deres det dette di din disse ditt du dykk dykkar då eg ein eit eitt eller elles en enn er et ett etter for fordi fra før ha hadde han hans har hennar henne hennes her hjå ho hoe honom hoss hossen hun hva hvem hver hvilke hvilken hvis hvor hvordan hvorfor i ikke ikkje ikkje ingen ingi inkje inn inni ja jeg kan kom korleis korso kun kunne kva kvar kvarhelst kven kvi kvifor man mange me med medan meg meget mellom men mi min mine mitt mot mykje ned no noe noen noka noko nokon nokor nokre nå når og også om opp oss over på samme seg selv si si sia sidan siden sin sine sitt sjøl skal skulle slik so som som somme somt så sånn til um upp ut uten var vart varte ved vere verte vi vil ville vore vors vort vår være være vært å'.split(' '));
 
     lunr.Pipeline.registerFunction(lunr.no.stopWordFilter, 'stopWordFilter-no');
   };

@@ -60,6 +60,14 @@
         lunr.tr.stopWordFilter,
         lunr.tr.stemmer
       );
+
+      // for lunr version 2
+      // this is necessary so that every searched word is also stemmed before
+      // in lunr <= 1 this is not needed, as it is done using the normal pipeline
+      if (this.searchPipeline) {
+        this.searchPipeline.reset();
+        this.searchPipeline.add(lunr.tr.stemmer)
+      }
     };
 
     /* lunr trimmer function */
@@ -317,11 +325,13 @@
           }
 
           function r_mark_possessives() {
-            return sbp.find_among_b(a_0, 10) && r_mark_suffix_with_optional_U_vowel();
+            return sbp.find_among_b(a_0, 10) &&
+              r_mark_suffix_with_optional_U_vowel();
           }
 
           function r_mark_sU() {
-            return r_check_vowel_harmony() && sbp.in_grouping_b(g_U, 105, 305) && r_mark_suffix_with_optional_s_consonant();
+            return r_check_vowel_harmony() && sbp.in_grouping_b(g_U, 105, 305) &&
+              r_mark_suffix_with_optional_s_consonant();
           }
 
           function r_mark_lArI() {
@@ -329,7 +339,8 @@
           }
 
           function r_mark_yU() {
-            return r_check_vowel_harmony() && sbp.in_grouping_b(g_U, 105, 305) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.in_grouping_b(g_U, 105, 305) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_nU() {
@@ -337,11 +348,13 @@
           }
 
           function r_mark_nUn() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_3, 4) && r_mark_suffix_with_optional_n_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_3, 4) &&
+              r_mark_suffix_with_optional_n_consonant();
           }
 
           function r_mark_yA() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_4, 2) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_4, 2) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_nA() {
@@ -365,7 +378,8 @@
           }
 
           function r_mark_ylA() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_10, 2) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_10, 2) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_ki() {
@@ -373,11 +387,13 @@
           }
 
           function r_mark_ncA() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_11, 2) && r_mark_suffix_with_optional_n_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_11, 2) &&
+              r_mark_suffix_with_optional_n_consonant();
           }
 
           function r_mark_yUm() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_12, 4) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_12, 4) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_sUn() {
@@ -385,7 +401,8 @@
           }
 
           function r_mark_yUz() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_14, 4) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_14, 4) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_sUnUz() {
@@ -409,19 +426,23 @@
           }
 
           function r_mark_yDU() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_20, 32) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_20, 32) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_ysA() {
-            return sbp.find_among_b(a_21, 8) && r_mark_suffix_with_optional_y_consonant();
+            return sbp.find_among_b(a_21, 8) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_ymUs_() {
-            return r_check_vowel_harmony() && sbp.find_among_b(a_22, 4) && r_mark_suffix_with_optional_y_consonant();
+            return r_check_vowel_harmony() && sbp.find_among_b(a_22, 4) &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function r_mark_yken() {
-            return sbp.eq_s_b(3, "ken") && r_mark_suffix_with_optional_y_consonant();
+            return sbp.eq_s_b(3, "ken") &&
+              r_mark_suffix_with_optional_y_consonant();
           }
 
           function habr4() {
@@ -1041,29 +1062,25 @@
         };
 
       /* and return a function that stems a word for the current locale */
-      return function(word) {
-        st.setCurrent(word);
-        st.stem();
-        return st.getCurrent();
+      return function(token) {
+        // for lunr version 2
+        if (typeof token.update === "function") {
+          return token.update(function(word) {
+            st.setCurrent(word);
+            st.stem();
+            return st.getCurrent();
+          })
+        } else { // for lunr version <= 1
+          st.setCurrent(token);
+          st.stem();
+          return st.getCurrent();
+        }
       }
     })();
 
     lunr.Pipeline.registerFunction(lunr.tr.stemmer, 'stemmer-tr');
 
-    /* stop word filter function */
-    lunr.tr.stopWordFilter = function(token) {
-      if (lunr.tr.stopWordFilter.stopWords.indexOf(token) === -1) {
-        return token;
-      }
-    };
-
-    lunr.tr.stopWordFilter.stopWords = new lunr.SortedSet();
-    lunr.tr.stopWordFilter.stopWords.length = 210;
-
-    // The space at the beginning is crucial: It marks the empty string
-    // as a stop word. lunr.js crashes during search when documents
-    // processed by the pipeline still contain the empty string.
-    lunr.tr.stopWordFilter.stopWords.elements = ' acaba altmış altı ama ancak arada aslında ayrıca bana bazı belki ben benden beni benim beri beş bile bin bir biri birkaç birkez birçok birşey birşeyi biz bizden bize bizi bizim bu buna bunda bundan bunlar bunları bunların bunu bunun burada böyle böylece da daha dahi de defa değil diye diğer doksan dokuz dolayı dolayısıyla dört edecek eden ederek edilecek ediliyor edilmesi ediyor elli en etmesi etti ettiği ettiğini eğer gibi göre halen hangi hatta hem henüz hep hepsi her herhangi herkesin hiç hiçbir iki ile ilgili ise itibaren itibariyle için işte kadar karşın katrilyon kendi kendilerine kendini kendisi kendisine kendisini kez ki kim kimden kime kimi kimse kırk milyar milyon mu mü mı nasıl ne neden nedenle nerde nerede nereye niye niçin o olan olarak oldu olduklarını olduğu olduğunu olmadı olmadığı olmak olması olmayan olmaz olsa olsun olup olur olursa oluyor on ona ondan onlar onlardan onları onların onu onun otuz oysa pek rağmen sadece sanki sekiz seksen sen senden seni senin siz sizden sizi sizin tarafından trilyon tüm var vardı ve veya ya yani yapacak yapmak yaptı yaptıkları yaptığı yaptığını yapılan yapılması yapıyor yedi yerine yetmiş yine yirmi yoksa yüz zaten çok çünkü öyle üzere üç şey şeyden şeyi şeyler şu şuna şunda şundan şunları şunu şöyle'.split(' ');
+    lunr.tr.stopWordFilter = lunr.generateStopWordFilter('acaba altmış altı ama ancak arada aslında ayrıca bana bazı belki ben benden beni benim beri beş bile bin bir biri birkaç birkez birçok birşey birşeyi biz bizden bize bizi bizim bu buna bunda bundan bunlar bunları bunların bunu bunun burada böyle böylece da daha dahi de defa değil diye diğer doksan dokuz dolayı dolayısıyla dört edecek eden ederek edilecek ediliyor edilmesi ediyor elli en etmesi etti ettiği ettiğini eğer gibi göre halen hangi hatta hem henüz hep hepsi her herhangi herkesin hiç hiçbir iki ile ilgili ise itibaren itibariyle için işte kadar karşın katrilyon kendi kendilerine kendini kendisi kendisine kendisini kez ki kim kimden kime kimi kimse kırk milyar milyon mu mü mı nasıl ne neden nedenle nerde nerede nereye niye niçin o olan olarak oldu olduklarını olduğu olduğunu olmadı olmadığı olmak olması olmayan olmaz olsa olsun olup olur olursa oluyor on ona ondan onlar onlardan onları onların onu onun otuz oysa pek rağmen sadece sanki sekiz seksen sen senden seni senin siz sizden sizi sizin tarafından trilyon tüm var vardı ve veya ya yani yapacak yapmak yaptı yaptıkları yaptığı yaptığını yapılan yapılması yapıyor yedi yerine yetmiş yine yirmi yoksa yüz zaten çok çünkü öyle üzere üç şey şeyden şeyi şeyler şu şuna şunda şundan şunları şunu şöyle'.split(' '));
 
     lunr.Pipeline.registerFunction(lunr.tr.stopWordFilter, 'stopWordFilter-tr');
   };
