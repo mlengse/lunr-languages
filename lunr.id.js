@@ -615,8 +615,6 @@
 
     lunr.Pipeline.registerFunction(lunr.id.stopWordFilter, 'stopWordFilter-id');
 
-
-
     // lunr.Pipeline.registerFunction(lunr.ru.stopWordFilter, 'stopWordFilter-ru');
 
   };
