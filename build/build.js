@@ -88,8 +88,8 @@ var list = [
     }, {
         locale: 'id'
     }, {
-        locale: 'ja'
-    }, {
+        // locale: 'ja'
+    // }, {
         locale: 'jp'
     }, {
         locale: 'kn'
