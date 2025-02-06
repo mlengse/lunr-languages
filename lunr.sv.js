@@ -60,14 +60,6 @@
         lunr.sv.stopWordFilter,
         lunr.sv.stemmer
       );
-
-      // for lunr version 2
-      // this is necessary so that every searched word is also stemmed before
-      // in lunr <= 1 this is not needed, as it is done using the normal pipeline
-      if (this.searchPipeline) {
-        this.searchPipeline.reset();
-        this.searchPipeline.add(lunr.sv.stemmer)
-      }
     };
 
     /* lunr trimmer function */
@@ -231,25 +223,29 @@
         };
 
       /* and return a function that stems a word for the current locale */
-      return function(token) {
-        // for lunr version 2
-        if (typeof token.update === "function") {
-          return token.update(function(word) {
-            st.setCurrent(word);
-            st.stem();
-            return st.getCurrent();
-          })
-        } else { // for lunr version <= 1
-          st.setCurrent(token);
-          st.stem();
-          return st.getCurrent();
-        }
+      return function(word) {
+        st.setCurrent(word);
+        st.stem();
+        return st.getCurrent();
       }
     })();
 
     lunr.Pipeline.registerFunction(lunr.sv.stemmer, 'stemmer-sv');
 
-    lunr.sv.stopWordFilter = lunr.generateStopWordFilter('alla allt att av blev bli blir blivit de dem den denna deras dess dessa det detta dig din dina ditt du där då efter ej eller en er era ert ett från för ha hade han hans har henne hennes hon honom hur här i icke ingen inom inte jag ju kan kunde man med mellan men mig min mina mitt mot mycket ni nu när någon något några och om oss på samma sedan sig sin sina sitta själv skulle som så sådan sådana sådant till under upp ut utan vad var vara varför varit varje vars vart vem vi vid vilka vilkas vilken vilket vår våra vårt än är åt över'.split(' '));
+    /* stop word filter function */
+    lunr.sv.stopWordFilter = function(token) {
+      if (lunr.sv.stopWordFilter.stopWords.indexOf(token) === -1) {
+        return token;
+      }
+    };
+
+    lunr.sv.stopWordFilter.stopWords = new lunr.SortedSet();
+    lunr.sv.stopWordFilter.stopWords.length = 115;
+
+    // The space at the beginning is crucial: It marks the empty string
+    // as a stop word. lunr.js crashes during search when documents
+    // processed by the pipeline still contain the empty string.
+    lunr.sv.stopWordFilter.stopWords.elements = ' alla allt att av blev bli blir blivit de dem den denna deras dess dessa det detta dig din dina ditt du där då efter ej eller en er era ert ett från för ha hade han hans har henne hennes hon honom hur här i icke ingen inom inte jag ju kan kunde man med mellan men mig min mina mitt mot mycket ni nu när någon något några och om oss på samma sedan sig sin sina sitta själv skulle som så sådan sådana sådant till under upp ut utan vad var vara varför varit varje vars vart vem vi vid vilka vilkas vilken vilket vår våra vårt än är åt över'.split(' ');
 
     lunr.Pipeline.registerFunction(lunr.sv.stopWordFilter, 'stopWordFilter-sv');
   };
