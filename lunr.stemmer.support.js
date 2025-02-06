@@ -291,9 +291,14 @@
                 var endRegex = new RegExp("[^" + wordCharacters + "]+$")
 
                 return function(token) {
-                    return token
-                        .replace(startRegex, '')
-                        .replace(endRegex, '');
+                    if(typeof token.replace === 'function'){
+                        return token
+                            .replace(startRegex, '')
+                            .replace(endRegex, '');
+                    }
+                //     return token.str
+                //         .replace(startRegex, '')
+                //         .replace(endRegex, '');
                 };
             }
         }

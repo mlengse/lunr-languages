@@ -86,7 +86,9 @@ var list = [
         stopwords: stopwordsRepoFolder + 'it.csv',
         wordCharacters: wordCharacters('Latin')
     }, {
-        locale: 'id'
+        locale: 'id',
+        file: 'IndonesianStemmer.js',
+
     }, {
         // locale: 'ja'
     // }, {

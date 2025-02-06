@@ -103,14 +103,14 @@ const TinySegmenter = require('./tinyseg'); // Japanese
     lunr.Pipeline.registerFunction(lunr.jp.stemmer, 'stemmer-jp');
 
     /* stop word filter function */
-    lunr.jp.stopWordFilter = function(token) {
-      if (lunr.jp.stopWordFilter.stopWords.indexOf(token) === -1) {
-        return token;
-      }
-    };
+    // lunr.jp.stopWordFilter = function(token) {
+    //   if (lunr.jp.stopWordFilter.stopWords.indexOf(token) === -1) {
+    //     return token;
+    //   }
+    // };
 
-    lunr.jp.stopWordFilter.stopWords = new lunr.SortedSet();
-    lunr.jp.stopWordFilter.stopWords.length = 45;
+    // lunr.jp.stopWordFilter.stopWords = new lunr.SortedSet();
+    // lunr.jp.stopWordFilter.stopWords.length = 45;
 
     lunr.jp['wordCharacters'] = '一二三四五六七八九十百千万億兆一-龠々〆ヵヶぁ-んァ-ヴーｱ-ﾝﾞa-zA-Zａ-ｚＡ-Ｚ0-9０-９';
     lunr.jp.trimmer = lunr.trimmerSupport.generateTrimmer(lunr.jp.wordCharacters);
@@ -120,7 +120,10 @@ const TinySegmenter = require('./tinyseg'); // Japanese
     // as a stop word. lunr.js crashes during search when documents
     // processed by the pipeline still contain the empty string.
     // stopword for japanese is from http://www.ranks.nl/stopwords/japanese
-    lunr.jp.stopWordFilter.stopWords.elements = " これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います は が の に を で え から まで より も どの と し それで しかし".split(" ");
+    // lunr.jp.stopWordFilter.stopWords.elements = " これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います は が の に を で え から まで より も どの と し それで しかし".split(" ");
+
+    lunr.jp.stopWordFilter = lunr.generateStopWordFilter(" これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います は が の に を で え から まで より も どの と し それで しかし".split(" "));
+
     lunr.Pipeline.registerFunction(lunr.jp.stopWordFilter, 'stopWordFilter-jp');
   };
 }))
