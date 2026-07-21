@@ -165,7 +165,7 @@ Searching inside documents is not as straight forward as using `indexOf()`, sinc
 
 I've created this project by compiling and wrapping stemmers toghether with stop words from various sources ([including users contributions](https://github.com/MihaiValentin/lunr-languages/pulls?q=is%3Apr)) so they can be directly used with all the current versions of Lunr.
 
-* <https://github.com/fortnightlabs/snowball-js> (the stemmers for all languages, ported from snowball-js)
+* <https://github.com/mlengse/snowball-js> (the stemmers for all languages, ported from snowball-js)
 * <https://github.com/mlengse/stopwords-filter> (the stop words list for the other languages)
 * <http://chasen.org/~taku/software/TinySegmenter/> (the tinyseg Tiny Segmente Japanese tokenizer)
 
