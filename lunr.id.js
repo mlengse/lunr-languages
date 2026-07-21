@@ -92,49 +92,49 @@
 
           /** @const */
           var a_0 = [
-            ["kah", -1, 1],
-            ["lah", -1, 1],
-            ["pun", -1, 1]
+            new Among("kah", -1, 1),
+            new Among("lah", -1, 1),
+            new Among("pun", -1, 1)
           ];
 
           /** @const */
           var a_1 = [
-            ["nya", -1, 1],
-            ["ku", -1, 1],
-            ["mu", -1, 1]
+            new Among("nya", -1, 1),
+            new Among("ku", -1, 1),
+            new Among("mu", -1, 1)
           ];
 
           /** @const */
           var a_2 = [
-            ["i", -1, 1, r_SUFFIX_I_OK],
-            ["an", -1, 1, r_SUFFIX_AN_OK],
-            ["kan", 1, 1, r_SUFFIX_KAN_OK]
+            new Among("i", -1, 1, r_SUFFIX_I_OK),
+            new Among("an", -1, 1, r_SUFFIX_AN_OK),
+            new Among("kan", 1, 1, r_SUFFIX_KAN_OK)
           ];
 
           /** @const */
           var a_3 = [
-            ["di", -1, 1],
-            ["ke", -1, 2],
-            ["me", -1, 1],
-            ["mem", 2, 5],
-            ["men", 2, 1],
-            ["meng", 4, 1],
-            ["meny", 4, 3, r_VOWEL],
-            ["pem", -1, 6],
-            ["pen", -1, 2],
-            ["peng", 8, 2],
-            ["peny", 8, 4, r_VOWEL],
-            ["ter", -1, 1]
+            new Among("di", -1, 1),
+            new Among("ke", -1, 2),
+            new Among("me", -1, 1),
+            new Among("mem", 2, 5),
+            new Among("men", 2, 1),
+            new Among("meng", 4, 1),
+            new Among("meny", 4, 3, r_VOWEL),
+            new Among("pem", -1, 6),
+            new Among("pen", -1, 2),
+            new Among("peng", 8, 2),
+            new Among("peny", 8, 4, r_VOWEL),
+            new Among("ter", -1, 1)
           ];
 
           /** @const */
           var a_4 = [
-            ["be", -1, 3, r_KER],
-            ["belajar", 0, 4],
-            ["ber", 0, 3],
-            ["pe", -1, 1],
-            ["pelajar", 3, 2],
-            ["per", 3, 1]
+            new Among("be", -1, 3, r_KER),
+            new Among("belajar", 0, 4),
+            new Among("ber", 0, 3),
+            new Among("pe", -1, 1),
+            new Among("pelajar", 3, 2),
+            new Among("per", 3, 1)
           ];
 
           /** @const */
@@ -150,7 +150,7 @@
             // [, line 51
             base.ket = base.cursor;
             // substring, line 51
-            if (base.find_among_b(a_0) == 0) {
+            if (base.find_among_b(a_0, a_0.length) == 0) {
               return false;
             }
             // ], line 51
@@ -170,7 +170,7 @@
             // [, line 57
             base.ket = base.cursor;
             // substring, line 57
-            if (base.find_among_b(a_1) == 0) {
+            if (base.find_among_b(a_1, a_1.length) == 0) {
               return false;
             }
             // ], line 57
@@ -233,7 +233,7 @@
             // [, line 132
             base.ket = base.cursor;
             // substring, line 132
-            if (base.find_among_b(a_2) == 0) {
+            if (base.find_among_b(a_2, a_2.length) == 0) {
               return false;
             }
             // ], line 132
@@ -276,7 +276,7 @@
             // [, line 146
             base.bra = base.cursor;
             // substring, line 146
-            among_var = base.find_among(a_3);
+            among_var = base.find_among(a_3, a_3.length);
             if (among_var == 0) {
               return false;
             }
@@ -384,7 +384,7 @@
             // [, line 162
             base.bra = base.cursor;
             // substring, line 162
-            among_var = base.find_among(a_4);
+            among_var = base.find_among(a_4, a_4.length);
             if (among_var == 0) {
               return false;
             }

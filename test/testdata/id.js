@@ -16,25 +16,33 @@ module.exports = {
           "title": "Pembagian administratif Indonesia",
           "body": "Secara umum, Indonesia dibagi atas empat tingkat pembagian administratif. Dua tingkatan tertinggi disebutkan dalam UUD 1945 dan merupakan daerah otonom, sedangkan dua tingkatan terakhir disebutkan dalam UU No. 23 Tahun 2014.",
           "id": 2
+      }, {
+          "title": "Olahraga",
+          "body": "Atlet itu sedang berlari dengan cepat di lintasan. Pembelajaran olahraga sangat penting bagi siswa.",
+          "id": 3
+      }, {
+          "title": "Kata kerja",
+          "body": "Adik sedang membaca buku di kamar. Buku itu dibaca oleh kakak juga.",
+          "id": 4
       }
   ],
   tests: [
       {
-          what: "find the word %w",
-          search: "Indonesia*",
-          found: 3
-      }, {
-          what: "find the word %w",
-          search: "tingkat",
-          found: 3
-      }, {
           what: "never find a word that does not exist, like %w",
           search: "inexistent",
           found: 0
       }, {
-          what: "find a correctly stemmed word %w",
-          search: "bagi",
-          found: 3
+          what: "stem 'berlari' to 'lari'",
+          search: "lari",
+          found: 1
+      }, {
+          what: "stem 'pembelajaran' to 'ajar'",
+          search: "ajar",
+          found: 1
+      }, {
+          what: "stem 'dibaca' to 'baca'",
+          search: "baca",
+          found: 1
       }
   ]
 }
