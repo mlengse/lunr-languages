@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "homepage": "https://github.com/mlengse/lunr-languages",
   "authors": [
-    "Tombarr <Tombarr@users.noreply.github.com>"
+    "mLengse (medotsys@gmail.com)"
   ],
   "description": "A a collection of languages stemmers and stopwords for Lunr Javascript library",
   "moduleType": [
