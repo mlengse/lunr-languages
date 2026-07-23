@@ -81,19 +81,10 @@
     lunr.Pipeline.registerFunction(lunr.vi.trimmer, 'trimmer-vi');
 
     /* stop word filter function */
-    lunr.vi.stopWordFilter = function(token) {
-      if (lunr.vi.stopWordFilter.stopWords.indexOf(token) === -1) {
-        return token;
-      }
-    };
-
-    lunr.vi.stopWordFilter.stopWords = new lunr.SortedSet();
-    lunr.vi.stopWordFilter.stopWords.length = 4;
-
     // The space at the beginning is crucial: It marks the empty string
     // as a stop word. lunr.js crashes during search when documents
     // processed by the pipeline still contain the empty string.
-    lunr.vi.stopWordFilter.stopWords.elements = " là cái nhưng mà".split(" ");
+    lunr.vi.stopWordFilter = lunr.generateStopWordFilter(" là cái nhưng mà".split(" "));
 
     lunr.Pipeline.registerFunction(lunr.vi.stopWordFilter, 'stopWordFilter-vi');
   };

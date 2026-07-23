@@ -247,7 +247,7 @@ lunrVersions.forEach(function (lunrVersion) {
                 var lunr = require('./lunr/' + lunrVersion.lunr);
                 require('../lunr.stemmer.support.js')(lunr);
                 if (language === 'ja' || language === 'jp') {    // for japanese, we must also load the tinyseg tokenizer
-                    require('../tinyseg')(lunr);
+                    lunr.TinySegmenter = require('../tinyseg');
                 }
                 if (language === 'th' || language === 'hi' || language === 'ta' || language === 'sa' || language === 'kn' || language === 'te') {    // for thai, we must also load the wordcut tokenizer
                     lunr.wordcut = require('../wordcut');
