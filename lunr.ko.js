@@ -56,7 +56,7 @@
     };
 
     /* lunr trimmer function */
-    lunr.ko.wordCharacters = "가나다라마바사아자차카타파하가-힣ㄱ-ㅎㅏ-ㅣ";
+    lunr.ko.wordCharacters = "가나다라마바사아자차카타파하가-힣ㄱ-ㅎㅏ-ㅣa-zA-z";
     lunr.ko.trimmer = lunr.trimmerSupport.generateTrimmer(lunr.ko.wordCharacters);
 
     lunr.Pipeline.registerFunction(lunr.ko.trimmer, 'trimmer-ko');

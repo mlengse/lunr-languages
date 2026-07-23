@@ -16,6 +16,9 @@ var lunrVersions = [
     }, {
         version: "2.3.5",
         lunr: "lunr-2.3.5"
+    }, {
+        version: "2.3.9",
+        lunr: "lunr-2.3.9"
     }
 
 ];

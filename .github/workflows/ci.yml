@@ -14,6 +14,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Build lunr.js from submodule
+        run: |
+          cd vendor/lunr.js
+          make lunr.js
+          cp lunr.js ../../test/lunr/lunr-2.3.9.js
 
       - name: Setup Node.js
         uses: actions/setup-node@v6

@@ -1,5 +1,3 @@
-const TinySegmenter = require('./tinyseg'); // Japanese
-
 /*!
  * Lunr languages, `Japanese` language
  * https://github.com/MihaiValentin/lunr-languages
@@ -54,25 +52,38 @@ const TinySegmenter = require('./tinyseg'); // Japanese
       throw new Error('Lunr stemmer support is not present. Please include / require Lunr stemmer support before this script.');
     }
 
+    var isLunr2 = lunr.version[0] == "2";
+
     /* register specific locale function */
     lunr.jp = function() {
       this.pipeline.reset();
       this.pipeline.add(
+        lunr.jp.trimmer,
         lunr.jp.stopWordFilter,
         lunr.jp.stemmer
       );
+
       // change the tokenizer for japanese one
-      lunr.tokenizer = lunr.jp.tokenizer;
+      if (isLunr2) {
+        this.tokenizer = lunr.jp.tokenizer;
+      } else {
+        if (lunr.tokenizer) {
+          lunr.tokenizer = lunr.jp.tokenizer;
+        }
+        if (this.tokenizerFn) {
+          this.tokenizerFn = lunr.jp.tokenizer;
+        }
+      }
     };
-    var segmenter = new TinySegmenter(); // インスタンス生成
+    var segmenter = new lunr.TinySegmenter();
 
     lunr.jp.tokenizer = function(obj) {
       if (!arguments.length || obj == null || obj == undefined) return []
       if (Array.isArray(obj)) return obj.map(function(t) {
-        return t.toLowerCase()
+        return isLunr2 ? new lunr.Token(t.toLowerCase()) : t.toLowerCase();
       })
 
-      var str = obj.toString().replace(/^\s+/, '')
+      var str = obj.toString().toLowerCase().replace(/^\s+/, '')
 
       for (var i = str.length - 1; i >= 0; i--) {
         if (/\S/.test(str.charAt(i))) {
@@ -81,14 +92,42 @@ const TinySegmenter = require('./tinyseg'); // Japanese
         }
       }
 
+      var tokens = [];
+      var len = str.length;
+      for (var sliceEnd = 0, sliceStart = 0; sliceEnd <= len; sliceEnd++) {
+        var char = str.charAt(sliceEnd);
+        var sliceLength = sliceEnd - sliceStart;
 
-      var segs = segmenter.segment(str); // 単語の配列が返る
-      return segs.filter(function(token) {
-          return !!token
-        })
-        .map(function(token) {
-          return token
-        })
+        if ((char.match(/\s/) || sliceEnd == len)) {
+          if (sliceLength > 0) {
+            var segs = segmenter.segment(str.slice(sliceStart, sliceEnd)).filter(
+              function(token) {
+                return !!token;
+              }
+            );
+
+            var segStart = sliceStart;
+            for (var j = 0; j < segs.length; j++) {
+              if (isLunr2) {
+                tokens.push(
+                  new lunr.Token(
+                    segs[j], {
+                      position: [segStart, segs[j].length],
+                      index: tokens.length
+                    }
+                  )
+                );
+              } else {
+                tokens.push(segs[j]);
+              }
+              segStart += segs[j].length;
+            }
+          }
+          sliceStart = sliceEnd + 1;
+        }
+      }
+
+      return tokens;
     }
 
     /* lunr stemmer function */
@@ -102,26 +141,12 @@ const TinySegmenter = require('./tinyseg'); // Japanese
 
     lunr.Pipeline.registerFunction(lunr.jp.stemmer, 'stemmer-jp');
 
-    /* stop word filter function */
-    // lunr.jp.stopWordFilter = function(token) {
-    //   if (lunr.jp.stopWordFilter.stopWords.indexOf(token) === -1) {
-    //     return token;
-    //   }
-    // };
-
-    // lunr.jp.stopWordFilter.stopWords = new lunr.SortedSet();
-    // lunr.jp.stopWordFilter.stopWords.length = 45;
-
+    /* lunr trimmer function */
     lunr.jp['wordCharacters'] = '一二三四五六七八九十百千万億兆一-龠々〆ヵヶぁ-んァ-ヴーｱ-ﾝﾞa-zA-Zａ-ｚＡ-Ｚ0-9０-９';
     lunr.jp.trimmer = lunr.trimmerSupport.generateTrimmer(lunr.jp.wordCharacters);
     lunr.Pipeline.registerFunction(lunr.jp.trimmer, 'trimmer-jp');
 
-    // The space at the beginning is crucial: It marks the empty string
-    // as a stop word. lunr.js crashes during search when documents
-    // processed by the pipeline still contain the empty string.
-    // stopword for japanese is from http://www.ranks.nl/stopwords/japanese
-    // lunr.jp.stopWordFilter.stopWords.elements = " これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います は が の に を で え から まで より も どの と し それで しかし".split(" ");
-
+    /* stop word filter function */
     lunr.jp.stopWordFilter = lunr.generateStopWordFilter(" これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います は が の に を で え から まで より も どの と し それで しかし".split(" "));
 
     lunr.Pipeline.registerFunction(lunr.jp.stopWordFilter, 'stopWordFilter-jp');
