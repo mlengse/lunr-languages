@@ -1,5 +1,21 @@
 var assert = require('assert');
 
+function lunrResolve(name) {
+    try {
+        return require.resolve('./lunr/' + name);
+    } catch (e) {
+        if (e.code === 'MODULE_NOT_FOUND') {
+            return require.resolve(name);
+        }
+        throw e;
+    }
+}
+
+function loadLunr(name) {
+    delete require.cache[lunrResolve(name)];
+    return require(lunrResolve(name));
+}
+
 var lunrVersions = [
     {
         version: "0.6.0",
@@ -18,7 +34,7 @@ var lunrVersions = [
         lunr: "lunr-2.3.5"
     }, {
         version: "2.3.9",
-        lunr: "lunr-2.3.9"
+        lunr: "lunr"
     }
 
 ];
@@ -59,8 +75,7 @@ var testDocuments = {
 lunrVersions.forEach(function (lunrVersion) {
     describe("Testing Lunr-Languages & Lunr version " + lunrVersion.version, function () {
         describe("should be able to correctly identify words in multi-documents scenarios (eg: en + ru)", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.ru.js')(lunr);
             require('../lunr.multi.js')(lunr);
@@ -110,8 +125,7 @@ lunrVersions.forEach(function (lunrVersion) {
             });
         });
         describe("should be able to use language tokenizers in multi-language indexes", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.zh.js')(lunr);
             require('../lunr.de.js')(lunr);
@@ -139,9 +153,7 @@ lunrVersions.forEach(function (lunrVersion) {
             });
         });
         describe("should keep numeric tokens when language trimmers are active", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.de.js')(lunr);
             require('../lunr.ru.js')(lunr);
@@ -175,9 +187,7 @@ lunrVersions.forEach(function (lunrVersion) {
             }
         });
         describe("should normalize German wildcard queries with umlauts", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.de.js')(lunr);
 
@@ -209,9 +219,7 @@ lunrVersions.forEach(function (lunrVersion) {
             }
         });
         describe("should normalize French accented queries", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.fr.js')(lunr);
 
@@ -245,9 +253,7 @@ lunrVersions.forEach(function (lunrVersion) {
                 // because these tests are asynchronous, we must ensure every load of lunr is fresh
                 // so we do not get the previous used languages on it.
                 // if we don't do this, when we'll run the test for jp, we'll also have da, de, fr, it languages used
-                delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)];
-
-                var lunr = require('./lunr/' + lunrVersion.lunr);
+                var lunr = loadLunr(lunrVersion.lunr);
                 require('../lunr.stemmer.support.js')(lunr);
                 if (language === 'ja' || language === 'jp') {    // for japanese, we must also load the tinyseg tokenizer
                     lunr.TinySegmenter = require('../tinyseg');
@@ -278,9 +284,7 @@ lunrVersions.forEach(function (lunrVersion) {
 
         if (lunrVersion.version[0] === "2") {
             describe("should support opt-in Spanish accent folding", function () {
-                delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-
-                var lunr = require('./lunr/' + lunrVersion.lunr);
+                var lunr = loadLunr(lunrVersion.lunr);
                 require('../lunr.stemmer.support.js')(lunr);
                 require('../lunr.es.js')(lunr);
 
