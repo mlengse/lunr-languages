@@ -37,6 +37,7 @@ Originally built for classic search, it is now widely used as a **lightweight re
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/IQ.png) Arabic
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/CN.png) Chinese<sup>1</sup>
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/VN.png) Vietnamese
+* ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/ID.png) Indonesian<sup>3</sup>
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/IN.png) Sanskrit
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/IN.png) Kannada
 * ![](https://raw.githubusercontent.com/madebybowtie/FlagKit/master/Assets/PNG/IN.png) Telugu
@@ -54,6 +55,8 @@ Originally built for classic search, it is now widely used as a **lightweight re
 <sup>1</sup> Chinese tokenization uses `Intl.Segmenter` with CJK bigrams by default, which works in modern browsers and Node.js without native dependencies. In Node.js, if `@node-rs/jieba` is installed, Lunr Languages uses it automatically for higher-quality Jieba segmentation. Browsers must support `Intl.Segmenter`; there is no frontend fallback.
 
 <sup>2</sup> Spanish includes an opt-in `lunr.es.accentFold` pipeline function for Lunr 2 indexes that should match user queries with omitted accents, such as `respiracion` matching `Respiración`, without replacing the default Spanish stemmer.
+
+<sup>3</sup> Indonesian support is provided by `lunr.id` — a dictionary-free, rule-based stemmer (particles, possessives, suffixes, first/second-order prefixes) plus a ~750-word stopword filter. See [SPEC.md](SPEC.md) for the full technical specification, algorithm details, and acceptance criteria.
 
 ---
 
@@ -158,6 +161,29 @@ var idx = lunr(function () {
   this.add({ id: 1, body: 'Respiración' });
 });
 ```
+
+### Indonesian (Bahasa Indonesia)
+
+```javascript
+const lunr = require('lunr');
+require('lunr-languages/lunr.stemmer.support')(lunr);
+require('lunr-languages/lunr.id')(lunr);
+
+const idx = lunr(function () {
+  this.use(lunr.id); // trimmer + stopword filter + stemmer
+
+  this.field('title', { boost: 10 });
+  this.field('body');
+
+  this.add({ title: 'Olahraga', body: 'Atlet sedang berlari di lintasan.' });
+});
+
+idx.search('lari');   // matches "berlari" (stemmed to "lari")
+```
+
+The stemmer reduces inflected forms to their base stem — e.g. `berlari` → `lari`,
+`pembelajaran` → `ajar`, `dibaca` → `baca` — and drops common Indonesian stopwords.
+For the complete algorithm, rule tables, and test matrix, see [SPEC.md](SPEC.md).
 
 ---
 
