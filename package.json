@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "js-beautify": "^1.5.1",
-    "lunr": "git+https://github.com/mlengse/lunr.js.git#9d59651c626f053e31efac633ab896322bcd0d6b",
+    "lunr": "git+https://github.com/mlengse/lunr.js.git#e60b160cc7026acde4314a3121fb6a4932c8bc06",
     "mocha": "^11.7.6",
     "terser": "^5.15.0",
     "unicode-8.0.0": "^0.1.5"
