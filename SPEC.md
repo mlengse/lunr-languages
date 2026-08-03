@@ -237,7 +237,7 @@ sebagai hasil (buffer termutasi walau `stem()` mengembalikan `false`). Contoh ny
 
 ## 6. Stop-Word Filter
 
-- `lunr.id.stopWordFilter` dibangkitkan dari daftar statis (~750 entri) via
+- `lunr.id.stopWordFilter` dibangkitkan dari daftar statis (758 entri) via
   `lunr.generateStopWordFilter`, terdaftar sebagai `'stopWordFilter-id'`.
 - Daftar berisi stop-word standar Bahasa Indonesia: pronomina, partikel, konjungsi,
   kata tanya, adverbia frekuensi, kata kerja/kopula umum (`adalah`, `ada`, `dengan`,

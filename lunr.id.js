@@ -594,17 +594,6 @@
     })();
 
     /* stop word filter function */
-    // lunr.id.stopWordFilter = function(token) {
-    //   if (lunr.id.stopWordFilter.stopWords.indexOf(token) === -1) {
-    //     return token;
-    //   }
-    // };
-
-    // console.log(lunr.SortedSet)
-
-    // lunr.id.stopWordFilter.stopWords = new lunr.SortedSet();
-    // lunr.id.stopWordFilter.stopWords.length = 759;
-
     // The space at the beginning is crucial: It marks the empty string
     // as a stop word. lunr.js crashes during search when documents
     // processed by the pipeline still contain the empty string.

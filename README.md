@@ -56,7 +56,7 @@ Originally built for classic search, it is now widely used as a **lightweight re
 
 <sup>2</sup> Spanish includes an opt-in `lunr.es.accentFold` pipeline function for Lunr 2 indexes that should match user queries with omitted accents, such as `respiracion` matching `Respiración`, without replacing the default Spanish stemmer.
 
-<sup>3</sup> Indonesian support is provided by `lunr.id` — a dictionary-free, rule-based stemmer (particles, possessives, suffixes, first/second-order prefixes) plus a ~750-word stopword filter. See [SPEC.md](SPEC.md) for the full technical specification, algorithm details, and acceptance criteria.
+<sup>3</sup> Indonesian support is provided by `lunr.id` — a dictionary-free, rule-based stemmer (particles, possessives, suffixes, first/second-order prefixes) plus a 758-word stopword filter. See [SPEC.md](SPEC.md) for the full technical specification, algorithm details, and acceptance criteria.
 
 ---
 
