@@ -8,7 +8,7 @@ var beautify = require('js-beautify').js_beautify;
 var Terser = require('terser');
 
 function compress(orig_code) {
-    return Terser.minify(orig_code, { compress: false, mangle: false, output: { beautify: false }, comments: true }).then(function(r) { return r.code; });
+    return Terser.minify(orig_code, { compress: false, mangle: false, output: { beautify: false } }).then(function(r) { return r.code; });
 }
 
 var stopwordsRepoFolder = './stopwords-filter/lib/stopwords/snowball/locales/';
@@ -158,7 +158,7 @@ var list = [
     }, {
         locale: 'fi',
         file: 'FinnishStemmer.js',
-        stopwords: stopwordsRepoFolder + 'fn.csv',
+        stopwords: stopwordsRepoFolder + 'fi.csv',
         wordCharacters: wordCharacters('Latin')
     }, {
         locale: 'fr',
@@ -251,6 +251,8 @@ var list = [
         locale: 'he',
     }, {
         locale: 'el',
+    }, {
+        locale: 'id',
     }
 ];
 
