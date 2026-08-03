@@ -215,7 +215,7 @@
               if (among_var) {
                 sbp.bra = sbp.cursor;
                 sbp.limit_backward = v_1;
-                if (among_var == 1)
+                if (among_var === 1)
                   sbp.slice_del();
               } else
                 sbp.limit_backward = v_1;

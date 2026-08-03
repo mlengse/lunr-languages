@@ -252,6 +252,7 @@
                     if (!sbp.eq_s_b(1, "\u044F"))
                       return false;
                   }
+                  // falls through
                   case 2:
                     sbp.slice_del();
                     break;
@@ -271,7 +272,7 @@
             among_var = sbp.find_among_b(a, n);
             if (among_var) {
               sbp.bra = sbp.cursor;
-              if (among_var == 1)
+              if (among_var === 1)
                 sbp.slice_del();
               return true;
             }
@@ -283,7 +284,6 @@
           }
 
           function r_adjectival() {
-            var among_var;
             if (r_adjective()) {
               habr2(a_2, 8);
               return true;
@@ -309,7 +309,7 @@
             among_var = sbp.find_among_b(a_6, 2);
             if (among_var) {
               sbp.bra = sbp.cursor;
-              if (r_R2() && among_var == 1)
+              if (r_R2() && among_var === 1)
                 sbp.slice_del();
             }
           }
@@ -327,9 +327,11 @@
                   if (!sbp.eq_s_b(1, "\u043D"))
                     break;
                   sbp.bra = sbp.cursor;
+                  // falls through
                 case 2:
                   if (!sbp.eq_s_b(1, "\u043D"))
                     break;
+                  // falls through
                 case 3:
                   sbp.slice_del();
                   break;

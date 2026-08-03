@@ -386,7 +386,7 @@
                   sbp.bra = sbp.cursor;
                   if (r_R2()) {
                     sbp.slice_del();
-                    if (among_var == 1) {
+                    if (among_var === 1) {
                       sbp.ket = sbp.cursor;
                       if (sbp.eq_s_b(2, "at")) {
                         sbp.bra = sbp.cursor;
@@ -405,7 +405,7 @@
                 among_var = sbp.find_among_b(a_3, 3);
                 if (among_var) {
                   sbp.bra = sbp.cursor;
-                  if (among_var == 1)
+                  if (among_var === 1)
                     if (r_R2())
                       sbp.slice_del();
                 }
@@ -418,7 +418,7 @@
                 among_var = sbp.find_among_b(a_4, 3);
                 if (among_var) {
                   sbp.bra = sbp.cursor;
-                  if (among_var == 1)
+                  if (among_var === 1)
                     if (r_R2())
                       sbp.slice_del();
                 }
@@ -452,7 +452,7 @@
               among_var = sbp.find_among_b(a_6, 120);
               if (among_var) {
                 sbp.bra = sbp.cursor;
-                if (among_var == 1)
+                if (among_var === 1)
                   sbp.slice_del();
                 sbp.limit_backward = v_1;
                 return true;
@@ -468,7 +468,7 @@
             among_var = sbp.find_among_b(a_7, 7);
             if (among_var) {
               sbp.bra = sbp.cursor;
-              if (among_var == 1)
+              if (among_var === 1)
                 if (r_RV())
                   sbp.slice_del();
             }
@@ -489,7 +489,7 @@
           }
 
           function r_residual_form() {
-            var among_var, v_1, v_2, v_3;
+            var among_var;
             sbp.ket = sbp.cursor;
             among_var = sbp.find_among_b(a_8, 4);
             if (among_var) {
@@ -499,7 +499,6 @@
                   if (r_RV()) {
                     sbp.slice_del();
                     sbp.ket = sbp.cursor;
-                    v_1 = sbp.limit - sbp.cursor;
                     if (habr6("u", "g"))
                       habr6("i", "c")
                   }

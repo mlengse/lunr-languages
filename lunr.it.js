@@ -481,7 +481,7 @@
                   sbp.bra = sbp.cursor;
                   if (r_R2()) {
                     sbp.slice_del();
-                    if (among_var == 1) {
+                    if (among_var === 1) {
                       sbp.ket = sbp.cursor;
                       if (sbp.eq_s_b(2, "at")) {
                         sbp.bra = sbp.cursor;
@@ -500,7 +500,7 @@
                 among_var = sbp.find_among_b(a_5, 3);
                 if (among_var) {
                   sbp.bra = sbp.cursor;
-                  if (among_var == 1)
+                  if (among_var === 1)
                     if (r_R2())
                       sbp.slice_del();
                 }
@@ -536,7 +536,7 @@
               among_var = sbp.find_among_b(a_7, 87);
               if (among_var) {
                 sbp.bra = sbp.cursor;
-                if (among_var == 1)
+                if (among_var === 1)
                   sbp.slice_del();
               }
               sbp.limit_backward = v_1;
