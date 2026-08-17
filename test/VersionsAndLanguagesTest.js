@@ -1,3 +1,6 @@
+var test = require('node:test');
+var describe = test.describe;
+var it = test.it;
 var assert = require('assert');
 
 function lunrResolve(name) {
@@ -188,9 +191,7 @@ lunrVersions.forEach(function (lunrVersion) {
             }
         });
         describe("should trim punctuation around locale words in language trimmers", function () {
-            delete require.cache[require.resolve('./lunr/' + lunrVersion.lunr)]
-
-            var lunr = require('./lunr/' + lunrVersion.lunr);
+            var lunr = loadLunr(lunrVersion.lunr);
             require('../lunr.stemmer.support.js')(lunr);
             require('../lunr.ko.js')(lunr);
             require('../lunr.hy.js')(lunr);
@@ -208,7 +209,7 @@ lunrVersions.forEach(function (lunrVersion) {
 
             it("should trim Vietnamese punctuation", function () {
                 assert.equal(lunr.vi.trimmer('(đình)'), 'đình')
-                assert.equal(lunr.vi.trimmer('đình,'), 'đình')
+                assert.equal(lunr.vi.trimmer('(đình,'), 'đình')
             });
         });
         describe("should normalize German wildcard queries with umlauts", function () {

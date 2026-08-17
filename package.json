@@ -1,8 +1,8 @@
 {
   "name": "lunr-languages",
   "description": "A a collection of languages stemmers and stopwords for Lunr Javascript library",
-  "author": "mLengse (medotsys@gmail.com)",
-  "version": "1.18.0",
+  "author": "Mihai Valentin (http://www.mihaivalentin.com)",
+  "version": "1.21.0",
   "license": "MPL-1.1",
   "type": "commonjs",
   "types": "./types/index.d.ts",
@@ -34,7 +34,7 @@
       ]
     }
   },
-  "engine": "node >=14.0.0",
+  "engine": "node 0.10.1",
   "exports": {
     "./package.json": "./package.json",
     "./lunr.*.js": {
@@ -89,20 +89,15 @@
   },
   "scripts": {
     "build": "node build/build.js",
-    "test": "mocha test/*Test.js"
+    "test": "node --test test/*Test.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mlengse/lunr-languages"
+    "url": "https://github.com/MihaiValentin/lunr-languages"
   },
   "devDependencies": {
     "js-beautify": "^1.5.1",
-    "lunr": "git+https://github.com/mlengse/lunr.js.git#e60b160cc7026acde4314a3121fb6a4932c8bc06",
-    "mocha": "^11.7.6",
-    "terser": "^5.15.0",
+    "uglify-js": "^2.4.15",
     "unicode-8.0.0": "^0.1.5"
-  },
-  "dependencies": {
-    "@node-rs/jieba": "^1.6.1"
   }
 }
