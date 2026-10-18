@@ -1062,21 +1062,37 @@
             }
             return false;
           }
-        };
+        },
+        cache = typeof Map !== 'undefined' ? new Map() : null,
+        CACHE_LIMIT = 2000;
+
+      function memoizedStem(word) {
+        if (!cache) {
+          st.setCurrent(word);
+          st.stem();
+          return st.getCurrent();
+        }
+        var stemmed = cache.get(word);
+        if (stemmed !== undefined) {
+          return stemmed;
+        }
+        st.setCurrent(word);
+        st.stem();
+        stemmed = st.getCurrent();
+        if (cache.size >= CACHE_LIMIT) {
+          cache.delete(cache.keys().next().value);
+        }
+        cache.set(word, stemmed);
+        return stemmed;
+      }
 
       /* and return a function that stems a word for the current locale */
       return function(token) {
         // for lunr version 2
         if (typeof token.update === "function") {
-          return token.update(function(word) {
-            st.setCurrent(word);
-            st.stem();
-            return st.getCurrent();
-          })
+          return token.update(memoizedStem);
         } else { // for lunr version <= 1
-          st.setCurrent(token);
-          st.stem();
-          return st.getCurrent();
+          return memoizedStem(token);
         }
       }
     })();

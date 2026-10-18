@@ -5,10 +5,10 @@
 
 var fs = require('fs');
 var beautify = require('js-beautify').js_beautify;
-var Terser = require('terser');
+var UglifyJS = require('uglify-js');
 
 function compress(orig_code) {
-    return Terser.minify(orig_code, { compress: false, mangle: false, output: { beautify: false } }).then(function(r) { return r.code; });
+    return Promise.resolve(UglifyJS.minify(orig_code, { compress: false, mangle: false, output: { beautify: false } }).code);
 }
 
 var stopwordsRepoFolder = './stopwords-filter/lib/stopwords/snowball/locales/';
