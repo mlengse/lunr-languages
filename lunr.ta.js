@@ -61,18 +61,6 @@
         lunr.ta.stemmer
       );
 
-      // change the tokenizer for japanese one
-      // if (isLunr2) { // for lunr version 2.0.0
-      //   this.tokenizer = lunr.ta.tokenizer;
-      // } else {
-      //   if (lunr.tokenizer) { // for lunr version 0.6.0
-      //     lunr.tokenizer = lunr.ta.tokenizer;
-      //   }
-      //   if (this.tokenizerFn) { // for lunr version 0.7.0 -> 1.0.0
-      //     this.tokenizerFn = lunr.ta.tokenizer;
-      //   }
-      // }
-
       if (this.searchPipeline) {
         this.searchPipeline.reset();
         this.searchPipeline.add(lunr.ta.stemmer)
