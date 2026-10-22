@@ -350,7 +350,8 @@
         'ΩΣΤΟΣΟ'
       ];
 
-      var alphabet = new RegExp('^[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ]+$');
+      var alphabet = /^[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ]+$/;
+      var stepOneRegExp = new RegExp('(.*)(' + Object.keys(stepOneExceptions).join('|') + ')$');
 
       function isGreek(word) {
         return alphabet.test(word);
@@ -381,7 +382,6 @@
         }
 
         //step 1
-        var stepOneRegExp = new RegExp('(.*)(' + Object.keys(stepOneExceptions).join('|') + ')$');
         var match = stepOneRegExp.exec(stemmedWord);
 
         if (match !== null) {
