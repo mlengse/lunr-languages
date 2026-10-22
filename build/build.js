@@ -11,6 +11,13 @@ function compress(orig_code) {
     return Promise.resolve(UglifyJS.minify(orig_code, { compress: false, mangle: false, output: { beautify: false } }).code);
 }
 
+// the leading /*! ... */ blocks of a hand-written file, kept in its minified
+// version when bundled third-party code requires its notice there
+function licenseHeader(code) {
+    var match = code.match(/^(\s*\/\*![\s\S]*?\*\/)+/);
+    return match ? match[0].trim() + '\n' : '';
+}
+
 var stopwordsRepoFolder = './stopwords-filter/lib/stopwords/snowball/locales/';
 var stopwordsCustomFolder = './stopwords-custom/';
 var stemmersCustomFolder = './custom-stemmers/';
@@ -253,6 +260,9 @@ var list = [
         locale: 'el',
     }, {
         locale: 'id',
+    }, {
+        locale: 'fa',
+        licenseHeader: true // bundles Snowball's Persian stemmer (BSD-3-Clause)
     }
 ];
 
@@ -300,7 +310,7 @@ async function main() {
         }
 
         fs.writeFileSync('lunr.' + fd.locale + '.js', beautify(f, { indent_size: 2 }));
-        var min = ft ? cm.replace(/\{\{languageName\}\}/g, fd.file.replace(/Stemmer\.js/g, '')) + await compress(f) : await compress(f);
+        var min = ft ? cm.replace(/\{\{languageName\}\}/g, fd.file.replace(/Stemmer\.js/g, '')) + await compress(f) : (fd.licenseHeader ? licenseHeader(f) : '') + await compress(f);
         fs.writeFileSync('min/lunr.' + fd.locale + '.min.js', min);
     }
 
