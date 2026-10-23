@@ -3126,7 +3126,7 @@ var GLOBSTAR = minimatch.GLOBSTAR = Minimatch.GLOBSTAR = {}
 var expand = require('brace-expansion')
 
 var plTypes = {
-  '!': { open: '(?:(?!(?:', close: '))[^/]*?)'},
+  '!': { open: '(?:[^/]*?(?<!(?:^|[/.])(?:', close: ')))'},
   '?': { open: '(?:', close: ')?' },
   '+': { open: '(?:', close: ')+' },
   '*': { open: '(?:', close: ')*' },
@@ -3401,7 +3401,6 @@ function parse (pattern, isSub) {
   var escaping = false
   // ? => one single character
   var patternListStack = []
-  var negativeLists = []
   var stateChar
   var inClass = false
   var reClassStart = -1
@@ -3507,8 +3506,7 @@ function parse (pattern, isSub) {
           open: plTypes[stateChar].open,
           close: plTypes[stateChar].close
         })
-        // negation is (?:(?!js)[^/]*)
-        re += stateChar === '!' ? '(?:(?!(?:' : '(?:'
+        re += plTypes[stateChar].open
         this.debug('plType %j %j', stateChar, re)
         stateChar = false
       continue
@@ -3522,12 +3520,9 @@ function parse (pattern, isSub) {
         clearStateChar()
         hasMagic = true
         var pl = patternListStack.pop()
-        // negation is (?:(?!js)[^/]*)
+        // negation is (?:[^/]*?(?<!(?:^|[/.])(?:<pattern>)))
         // The others are (?:<pattern>)<type>
         re += pl.close
-        if (pl.type === '!') {
-          negativeLists.push(pl)
-        }
         pl.reEnd = re.length
       continue
 
@@ -3676,39 +3671,6 @@ function parse (pattern, isSub) {
     case '.':
     case '[':
     case '(': addPatternStart = true
-  }
-
-  // Hack to work around lack of negative lookbehind in JS
-  // A pattern like: *.!(x).!(y|z) needs to ensure that a name
-  // like 'a.xyz.yz' doesn't match.  So, the first negative
-  // lookahead, has to look ALL the way ahead, to the end of
-  // the pattern.
-  for (var n = negativeLists.length - 1; n > -1; n--) {
-    var nl = negativeLists[n]
-
-    var nlBefore = re.slice(0, nl.reStart)
-    var nlFirst = re.slice(nl.reStart, nl.reEnd - 8)
-    var nlLast = re.slice(nl.reEnd - 8, nl.reEnd)
-    var nlAfter = re.slice(nl.reEnd)
-
-    nlLast += nlAfter
-
-    // Handle nested stuff like *(*.js|!(*.json)), where open parens
-    // mean that we should *not* include the ) in the bit that is considered
-    // "after" the negated section.
-    var openParensBefore = nlBefore.split('(').length - 1
-    var cleanAfter = nlAfter
-    for (i = 0; i < openParensBefore; i++) {
-      cleanAfter = cleanAfter.replace(/\)[+*?]?/, '')
-    }
-    nlAfter = cleanAfter
-
-    var dollar = ''
-    if (nlAfter === '' && isSub !== SUBPARSE) {
-      dollar = '$'
-    }
-    var newRe = nlBefore + nlFirst + nlAfter + dollar + nlLast
-    re = newRe
   }
 
   // if the re is not "" at this point, then we need to make sure
