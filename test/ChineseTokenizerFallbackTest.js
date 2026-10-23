@@ -391,4 +391,96 @@ describe('Chinese tokenizer selection', function() {
     assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
     assert.ok(consoleStub.infos[1].indexOf('Custom Chinese dictionaries') >= 0);
   });
+  it('falls back to Intl.Segmenter when @node-rs/jieba throws an error on require', function() {
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba') {
+        throw new Error('Failed to load native module @node-rs/jieba');
+      }
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([{
+      segment: '学',
+      index: 0,
+      isWordLike: true
+    }, {
+      segment: '姐',
+      index: 1,
+      isWordLike: true
+    }]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('学姐')), ['学', '学姐', '姐']);
+    assert.equal(consoleStub.infos.length, 1);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+  });
+
+  it('falls back to Intl.Segmenter when @node-rs/jieba/dict throws an error on require', function() {
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function() {
+              return {};
+            }
+          }
+        };
+      }
+      if (name === '@node-rs/jieba/dict') {
+        throw new Error('Failed to load @node-rs/jieba/dict');
+      }
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([{
+      segment: '学',
+      index: 0,
+      isWordLike: true
+    }, {
+      segment: '姐',
+      index: 1,
+      isWordLike: true
+    }]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('学姐')), ['学', '学姐', '姐']);
+    assert.equal(consoleStub.infos.length, 1);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+  });
+
+  it('falls back to Intl.Segmenter when jieba.Jieba.withDict throws during default instance creation', function() {
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function() {
+              throw new Error('withDict failed');
+            }
+          }
+        };
+      }
+      if (name === '@node-rs/jieba/dict') {
+        return { dict: 'default-dict' };
+      }
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([{
+      segment: '学',
+      index: 0,
+      isWordLike: true
+    }, {
+      segment: '姐',
+      index: 1,
+      isWordLike: true
+    }]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('学姐')), ['学', '学姐', '姐']);
+    assert.equal(consoleStub.infos.length, 1);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+  });
 });
