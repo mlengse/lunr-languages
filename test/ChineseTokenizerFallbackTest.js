@@ -348,4 +348,47 @@ describe('Chinese tokenizer selection', function() {
     assert.equal(consoleStub.infos.length, 0);
     assert.equal(consoleStub.errors.length, 1);
   });
+
+  it('falls back to Intl.Segmenter when @node-rs/jieba v2 fails to load a custom dictionary', function() {
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba/dict') {
+        return {
+          dict: 'default-dict'
+        };
+      }
+
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function() {
+              return {
+                loadDict: function() {
+                  throw new Error('Failed to load custom dict');
+                }
+              };
+            }
+          }
+        };
+      }
+
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([{
+      segment: '学',
+      index: 0,
+      isWordLike: true
+    }, {
+      segment: '姐',
+      index: 1,
+      isWordLike: true
+    }]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr, 'bad-custom-dict');
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('学姐')), ['学', '学姐', '姐']);
+    assert.equal(consoleStub.infos.length, 2);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+    assert.ok(consoleStub.infos[1].indexOf('Custom Chinese dictionaries') >= 0);
+  });
 });
