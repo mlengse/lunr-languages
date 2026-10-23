@@ -3175,12 +3175,13 @@ function ext (a, b) {
   a = a || {}
   b = b || {}
   var t = {}
-  Object.keys(b).forEach(function (k) {
+  var k
+  for (k in b) {
     t[k] = b[k]
-  })
-  Object.keys(a).forEach(function (k) {
+  }
+  for (k in a) {
     t[k] = a[k]
-  })
+  }
   return t
 }
 
