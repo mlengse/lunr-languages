@@ -450,6 +450,40 @@ describe('Chinese tokenizer selection', function() {
     assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
   });
 
+  it('falls back to Intl.Segmenter when @node-rs/jieba/dict throws error in getNodeJiebaDefaultDict', function() {
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function() {
+              return {};
+            }
+          }
+        };
+      }
+      if (name === '@node-rs/jieba/dict') {
+        throw new Error('@node-rs/jieba/dict fail');
+      }
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([{
+      segment: '学',
+      index: 0,
+      isWordLike: true
+    }, {
+      segment: '姐',
+      index: 1,
+      isWordLike: true
+    }]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('学姐')), ['学', '学姐', '姐']);
+    assert.equal(consoleStub.infos.length, 1);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+  });
+
   it('falls back to Intl.Segmenter when jieba.Jieba.withDict throws during default instance creation', function() {
     var consoleStub = createConsole();
     var plugin = loadAsNode(function(name) {
