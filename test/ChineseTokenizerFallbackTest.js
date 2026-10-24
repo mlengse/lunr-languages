@@ -517,4 +517,162 @@ describe('Chinese tokenizer selection', function() {
     assert.equal(consoleStub.infos.length, 1);
     assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
   });
+
+  it('uses @node-rs/jieba v2 when @node-rs/jieba/dict exports default via .default property', function() {
+    var requested = [];
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      requested.push(name);
+
+      if (name === '@node-rs/jieba/dict') {
+        return {
+          default: 'default-dict-property'
+        };
+      }
+
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function(dictionary) {
+              assert.equal(dictionary, 'default-dict-property');
+
+              return {
+                cut: function(str, searchMode) {
+                  assert.equal(str, '中华人民');
+                  assert.equal(searchMode, true);
+                  return ['中华 人民'];
+                }
+              };
+            }
+          }
+        };
+      }
+
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('中华人民')), ['中华', '人民']);
+    assert.deepEqual(requested, ['@node-rs/jieba', '@node-rs/jieba/dict']);
+    assert.deepEqual(consoleStub.infos, []);
+    assert.deepEqual(consoleStub.errors, []);
+  });
+
+  it('uses @node-rs/jieba v2 when @node-rs/jieba/dict exports default directly as value', function() {
+    var requested = [];
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      requested.push(name);
+
+      if (name === '@node-rs/jieba/dict') {
+        return 'direct-default-dict';
+      }
+
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function(dictionary) {
+              assert.equal(dictionary, 'direct-default-dict');
+
+              return {
+                cut: function(str, searchMode) {
+                  assert.equal(str, '中华人民');
+                  assert.equal(searchMode, true);
+                  return ['中华 人民'];
+                }
+              };
+            }
+          }
+        };
+      }
+
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr);
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('中华人民')), ['中华', '人民']);
+    assert.deepEqual(requested, ['@node-rs/jieba', '@node-rs/jieba/dict']);
+    assert.deepEqual(consoleStub.infos, []);
+    assert.deepEqual(consoleStub.errors, []);
+  });
+
+  it('uses @node-rs/jieba v2 with custom dict when @node-rs/jieba/dict throws error on require', function() {
+    var requested = [];
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      requested.push(name);
+
+      if (name === '@node-rs/jieba/dict') {
+        throw new Error('@node-rs/jieba/dict missing');
+      }
+
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function(dictionary) {
+              assert.equal(dictionary, 'custom-dict');
+
+              return {
+                cut: function(str, searchMode) {
+                  assert.equal(str, '中华人民');
+                  assert.equal(searchMode, true);
+                  return ['中华 人民'];
+                }
+              };
+            }
+          }
+        };
+      }
+
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([]), consoleStub);
+    var lunr = createLunr();
+
+    plugin(lunr, 'custom-dict');
+
+    assert.deepEqual(tokenStrings(lunr.zh.tokenizer('中华人民')), ['中华', '人民']);
+    assert.deepEqual(requested, ['@node-rs/jieba', '@node-rs/jieba/dict']);
+    assert.equal(consoleStub.infos.length, 1);
+    assert.ok(consoleStub.infos[0].indexOf('@node-rs/jieba') >= 0);
+    assert.deepEqual(consoleStub.errors, []);
+  });
+
+  it('caches dict resolution failure and does not re-require @node-rs/jieba/dict', function() {
+    var dictRequireCount = 0;
+    var consoleStub = createConsole();
+    var plugin = loadAsNode(function(name) {
+      if (name === '@node-rs/jieba') {
+        return {
+          Jieba: {
+            withDict: function() {
+              return {
+                cut: function() { return ['中华']; }
+              };
+            }
+          }
+        };
+      }
+
+      if (name === '@node-rs/jieba/dict') {
+        dictRequireCount++;
+        throw new Error('@node-rs/jieba/dict error');
+      }
+
+      throw new Error('Unexpected module ' + name);
+    }, createIntl([]), consoleStub);
+    var lunr1 = createLunr();
+    var lunr2 = createLunr();
+
+    plugin(lunr1, 'custom1');
+    plugin(lunr2, 'custom2');
+
+    lunr1.zh.tokenizer('中华');
+    lunr2.zh.tokenizer('中华');
+
+    assert.equal(dictRequireCount, 1);
+  });
 });
