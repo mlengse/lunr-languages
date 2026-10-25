@@ -2483,12 +2483,13 @@
                 return lunr.QueryLexer.lexBoost
             }
 
-            // TODO: there may be more separators we want to consider
-            if (char == " ") {
+            if (char.match(lunr.QueryLexer.termSeparator)) {
                 return lunr.QueryLexer.lexTerm
             }
         }
     }
+
+    lunr.QueryLexer.termSeparator = lunr.tokenizer.separator
 
     lunr.QueryParser = function (str, query) {
         this.lexer = new lunr.QueryLexer (str)
