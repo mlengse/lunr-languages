@@ -255,10 +255,26 @@
 
     var tokens = []
     var fromIndex = 0
+    var segs = jieba.cut(str, true)
 
-    jieba.cut(str, true).forEach(function(seg) {
-      seg.split(' ').forEach(function(token) {
-        if (!token) return
+    for (var i = 0; i < segs.length; i++) {
+      var seg = segs[i]
+      if (!seg) continue
+
+      if (seg.indexOf(' ') === -1) {
+        var start = str.indexOf(seg, fromIndex)
+        tokens.push({
+          token: seg,
+          start: start
+        })
+        fromIndex = start
+        continue
+      }
+
+      var subTokens = seg.split(' ')
+      for (var j = 0; j < subTokens.length; j++) {
+        var token = subTokens[j]
+        if (!token) continue
 
         var start = str.indexOf(token, fromIndex)
         tokens.push({
@@ -266,8 +282,8 @@
           start: start
         })
         fromIndex = start
-      })
-    })
+      }
+    }
 
     return tokens
   }
