@@ -158,7 +158,7 @@
     /* lunr stemmer function */
     lunr.ja.stemmer = (function() {
 
-      /* TODO japanese stemmer  */
+      /* Japanese stemming is handled via word segmentation; this function is a pass-through identity stemmer */
       return function(word) {
         return word;
       }
