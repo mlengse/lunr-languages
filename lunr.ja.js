@@ -122,7 +122,7 @@
         char = str.charAt(sliceEnd);
         sliceLength = sliceEnd - sliceStart;
 
-        if ((char.match(/\s/) || sliceEnd == len)) {
+        if ((/\s/.test(char) || sliceEnd == len)) {
           if (sliceLength > 0) {
             segs = segmenter.segment(str.slice(sliceStart, sliceEnd)).filter(
               function(token) {
