@@ -1308,8 +1308,7 @@
      */
     lunr.TokenSet.fromString = function (str) {
         var node = new lunr.TokenSet,
-            root = node,
-            wildcardFound = false
+            root = node
 
         /*
          * Iterates through all characters within the passed string
@@ -1324,7 +1323,6 @@
                 final = (i == len - 1)
 
             if (char == "*") {
-                wildcardFound = true
                 node.edges[char] = node
                 node.final = final
 
@@ -1334,11 +1332,6 @@
 
                 node.edges[char] = next
                 node = next
-
-                // TODO: is this needed anymore?
-                if (wildcardFound) {
-                    node.edges["*"] = root
-                }
             }
         }
 
