@@ -98,7 +98,7 @@
         var char = str.charAt(sliceEnd);
         var sliceLength = sliceEnd - sliceStart;
 
-        if ((char.match(/\s/) || sliceEnd == len)) {
+        if ((/\s/.test(char) || sliceEnd == len)) {
           if (sliceLength > 0) {
             var segs = segmenter.segment(str.slice(sliceStart, sliceEnd)).filter(
               function(token) {
