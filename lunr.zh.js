@@ -228,9 +228,10 @@
 
     while ((match = cjkRegex.exec(str))) {
       var run = match[0]
+      var startIndex = match.index
 
       for (var i = 0; i < run.length - 1; i++) {
-        addToken(tokens, seen, run.slice(i, i + 2), match.index + i)
+        addToken(tokens, seen, run.slice(i, i + 2), startIndex + i)
       }
     }
 
