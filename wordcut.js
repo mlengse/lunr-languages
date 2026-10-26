@@ -3571,9 +3571,9 @@ function parse (pattern, isSub) {
           // an invalid re. if so, re-walk the contents of the
           // would-be class to re-translate any characters that
           // were passed through as-is
-          // TODO: It would probably be faster to determine this
-          // without a try/catch and a new RegExp, but it's tricky
-          // to do safely.  For now, this is safe and works.
+          // Using try/catch with new RegExp is retained here as it is
+          // the safest and most reliable cross-platform method to validate
+          // regex character classes (e.g., out-of-order ranges or bad escapes).
           var cs = pattern.substring(classStart + 1, i)
           try {
             RegExp('[' + cs + ']')
