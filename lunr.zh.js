@@ -361,7 +361,8 @@
 
     /* lunr stemmer function */
     lunr.zh.stemmer = (function() {
-      /* TODO Chinese stemmer  */
+
+      /* Chinese stemming is handled via word segmentation; this function is a pass-through identity stemmer */
       return function(word) {
         return word;
       }
